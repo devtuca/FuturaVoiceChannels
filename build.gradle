@@ -1,0 +1,43 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '5.0.0'
+}
+
+group = 'dev'
+version = '1.0'
+
+compileJava {
+    options.encoding = 'UTF-8'
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+}
+
+tasks.build.dependsOn('shadowJar')
+
+repositories {
+    mavenCentral()
+
+    maven { url = 'https://m2.dv8tion.net/releases'}
+    maven { url = 'https://maven.husk.pro/snapshots/' }
+    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+    maven { url = 'https://oss.sonatype.org/content/groups/public/' }
+}
+
+dependencies {
+    implementation 'net.dv8tion:JDA:4.3.0_309'
+
+    def lombok = 'org.projectlombok:lombok:1.18.20'
+    compileOnly lombok
+    annotationProcessor lombok
+    implementation 'mysql:mysql-connector-java:8.0.26'
+    implementation 'pro.husk:mysql:1.4.1-SNAPSHOT'
+    compileOnly 'org.spigotmc:spigot-api:1.12-R0.1-SNAPSHOT'
+}
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        filter ReplaceTokens, tokens: [version: version]
+    }
+}
